@@ -6,7 +6,7 @@ const app = express();
 const port = 5000;
 
 const client = new AptosClient('https://api.testnet.aptoslabs.com/v1');
-const moduleAddress = "0xde5d94dac0db9e017d907b6e02a6d4274e0e2fbbe018e3a698d81e8da2028477";
+const moduleAddress = "0x9e296820201eb907297da80e0e666552bdaa63dccedaf5d98b94dce4c9183f65";
 
 app.use(bodyParser.json());
 
@@ -80,6 +80,86 @@ app.post('/api/create-entry', async (req, res) => {
         res.status(500).json({ error: "Error creating entry", details: error.message });
     }
 });
+
+async function getEntryById(accountAddress, entryId) {
+  try {
+    const functionName = "get_entry_by_id";
+    const url = `https://api.testnet.aptoslabs.com/v1/view`;
+
+    const payload = {
+      function: `${moduleAddress}::vortexengine::${functionName}`,
+      type_arguments: [],
+      arguments: [accountAddress, entryId.toString()],
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const responseData = await response.json();
+    console.log(`View Function Response for entryId ${entryId}:`, responseData);
+
+    if (Array.isArray(responseData) && responseData.length > 0) {
+      const entryData = responseData[0];
+      return {
+        entry_id: Number(entryData.entry_id),
+        Walletaddress: String(entryData.Walletaddress),
+        ipfscontent: String(entryData.ipfscontent),
+        timestamp: String(entryData.timestamp),
+      };
+    } else {
+      return { error: "Entry not found" };
+    }
+  } catch (error) {
+    console.error(`Error fetching entry ${entryId} from Move:`, error);
+    return { error: "Error fetching entry", details: error.message };
+  }
+}
+
+// Endpoint to get all entries from 1 to entry_counter
+app.post('/api/get-function-value', async (req, res) => {
+  const { accountAddress } = req.body;
+
+  try {
+    const resourceType = `${moduleAddress}::vortexengine::EntityList`;
+    const response = await client.getAccountResource(accountAddress, resourceType);
+
+    console.log("Response from getAccountResource:", response);
+
+    if (response && response.data && response.data.entry_counter) {
+      const entryCounter = Number(response.data.entry_counter);
+      console.log("Total Entries:", entryCounter);
+
+      const entries = [];
+
+      // Loop from 1 to entryCounter to fetch all entries
+      for (let entryId = 1; entryId <= entryCounter; entryId++) {
+        const entryData = await getEntryById(accountAddress, entryId);
+        if (!entryData.error) {
+          entries.push(entryData);
+        } else {
+          console.error(`Error fetching entry ${entryId}:`, entryData.error);
+        }
+      }
+
+      // Return all entries
+      res.status(200).json(entries);
+    } else {
+      res.status(404).json({ error: "Resource or entry_counter not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching function value:", error);
+    res.status(500).json({ error: "Error fetching function value", details: error.message });
+  }
+});
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
