@@ -1,12 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { AptosClient, AptosAccount, HexString } = require('aptos');
+const cors = require('cors');
 
 const app = express();
 const port = 5000;
 
 const client = new AptosClient('https://api.testnet.aptoslabs.com/v1');
 const moduleAddress = "0x9e296820201eb907297da80e0e666552bdaa63dccedaf5d98b94dce4c9183f65";
+
+app.use(cors("*"));
 
 app.use(bodyParser.json());
 
