@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { AptosClient, AptosAccount, HexString } = require('aptos');
 const cors = require('cors');
+const { ethers } = require('ethers');
 
 const app = express();
 const port = 5000;
