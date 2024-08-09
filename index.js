@@ -9,6 +9,7 @@ const port = 5000;
 
 const client = new AptosClient('https://api.testnet.aptoslabs.com/v1');
 const moduleAddress = "0x9e296820201eb907297da80e0e666552bdaa63dccedaf5d98b94dce4c9183f65";
+const moduleAddressForGryff = "0x9da4a621ea5eaaa65f3d37d00c4a7d5d0e9a850e53910886c04944074fbd0d7b";
 
 app.use(cors("*"));
 
@@ -407,6 +408,73 @@ app.post('/addEntity', async (req, res) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+async function listExistsForGryff(account) {
+  try {
+    const resource = await client.getAccountResource(account.address(), `${moduleAddressForGryff}::cryptdata::BlockControl`);
+    return !!resource;
+  } catch (error) {
+    if (error.status === 404) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+async function GryffcreateList(account) {
+  const payload = {
+      function: `${moduleAddressForGryff}::cryptdata::create_list`,
+      type_arguments: [],
+      arguments: [],
+  };
+  const txnRequest = await client.generateTransaction(account.address(), payload);
+  const signedTxn = await client.signTransaction(account, txnRequest);
+  const response = await client.submitTransaction(signedTxn);
+  await client.waitForTransaction(response.hash);
+  return response.hash;
+}
+
+app.post('/api/entry-with-private', async (req, res) => {
+  const { toaddress, messagecontent, timestamp, privateKey } = req.body;
+
+  try {
+      const account = getAptosAccount(privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey);
+
+      const exists = await listExistsForGryff(account);
+      if (!exists) {
+          console.log("List does not exist, creating list...");
+          await GryffcreateList(account);
+          console.log("List created.");
+      }
+
+      const payload = {
+        function: `${moduleAddressForGryff}::cryptdata::create_entry`,
+        type_arguments: [],
+        arguments: [toaddress, messagecontent, timestamp],
+      };
+
+      const txnRequest = await client.generateTransaction(account.address(), payload);
+      const signedTxn = await client.signTransaction(account, txnRequest);
+      const response = await client.submitTransaction(signedTxn);
+
+      await client.waitForTransaction(response.hash);
+      res.status(200).json({ message: "Entry created successfully", hash: response.hash });
+  } catch (error) {
+      console.error("Error creating entry:", error);
+      res.status(500).json({ error: "Error creating entry", details: error.message });
+  }
+});
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 app.get('/', (req, res) => {
