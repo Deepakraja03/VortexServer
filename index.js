@@ -179,18 +179,26 @@ app.post('/addEntity', async (req, res) => {
       const wallet = new ethers.Wallet(privateKey, provider); // Create a wallet with the provided private key
 
       // Set up the contract
-      const contractAddress = '0xa64d6e6C490fea5cd187080CC32811F07C455356'; // Replace with your contract address
+      const contractAddress = '0x2f6567B0dA00d1E16003f65af8eFFCBa2597218A'; // Replace with your contract address
       const contractABI = [
         {
           "inputs": [
-            { "internalType": "string", "name": "_dataUri", "type": "string" }
+            {
+              "internalType": "string",
+              "name": "_dataUri",
+              "type": "string"
+            }
           ],
           "name": "addEntity",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
-        { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
         {
           "anonymous": false,
           "inputs": [
@@ -223,13 +231,35 @@ app.post('/addEntity', async (req, res) => {
           "type": "event"
         },
         {
-          "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "name": "entities",
           "outputs": [
-            { "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "internalType": "address", "name": "user", "type": "address" },
-            { "internalType": "string", "name": "dataUri", "type": "string" },
-            { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "dataUri",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
           ],
           "stateMutability": "view",
           "type": "function"
@@ -240,10 +270,26 @@ app.post('/addEntity', async (req, res) => {
           "outputs": [
             {
               "components": [
-                { "internalType": "uint256", "name": "id", "type": "uint256" },
-                { "internalType": "address", "name": "user", "type": "address" },
-                { "internalType": "string", "name": "dataUri", "type": "string" },
-                { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "string",
+                  "name": "dataUri",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
               ],
               "internalType": "struct VortexStorage.VortexEntity[]",
               "name": "",
@@ -255,16 +301,36 @@ app.post('/addEntity', async (req, res) => {
         },
         {
           "inputs": [
-            { "internalType": "address", "name": "_user", "type": "address" }
+            {
+              "internalType": "address",
+              "name": "_user",
+              "type": "address"
+            }
           ],
           "name": "getEntitiesByAddress",
           "outputs": [
             {
               "components": [
-                { "internalType": "uint256", "name": "id", "type": "uint256" },
-                { "internalType": "address", "name": "user", "type": "address" },
-                { "internalType": "string", "name": "dataUri", "type": "string" },
-                { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "string",
+                  "name": "dataUri",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
               ],
               "internalType": "struct VortexStorage.VortexEntity[]",
               "name": "",
@@ -277,28 +343,54 @@ app.post('/addEntity', async (req, res) => {
         {
           "inputs": [],
           "name": "nextId",
-          "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "view",
           "type": "function"
         },
         {
           "inputs": [],
           "name": "owner",
-          "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
           "stateMutability": "view",
           "type": "function"
         },
         {
           "inputs": [
-            { "internalType": "address", "name": "", "type": "address" },
-            { "internalType": "uint256", "name": "", "type": "uint256" }
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
           ],
           "name": "userEntities",
-          "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "view",
           "type": "function"
         }
-      ]; // Replace with your contract ABI
+      ] // Replace with your contract ABI
       const contract = new ethers.Contract(contractAddress, contractABI, wallet); // Connect the wallet to the contract
 
       // Call the addEntity method on the contract
